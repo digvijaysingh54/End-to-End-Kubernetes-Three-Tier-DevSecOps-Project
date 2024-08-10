@@ -54,7 +54,8 @@ jobs:
     - name: Docker Image Build and Push - Frontend
       run: |
         cd Application-Code/frontend
-        docker build -t $AWS_ECR_REPO_NAME_frontend .
+        docker buildx create --use # Ensure Buildx is enabled
+        docker buildx build -t $AWS_ECR_REPO_NAME-frontend . # Specify the Docker context as '.'
         docker tag $AWS_ECR_REPO_NAME-frontend $REPOSITORY_URI$AWS_ECR_REPO_NAME-frontend:${{ github.run_number }}
         docker push $REPOSITORY_URI$AWS_ECR_REPO_NAME-frontend:${{ github.run_number }}
 
@@ -62,7 +63,8 @@ jobs:
     - name: Docker Image Build and Push - Backend
       run: |
         cd Application-Code/backend
-        docker build -t $AWS_ECR_REPO_NAME_backend .
+        docker buildx create --use # Ensure Buildx is enabled
+        docker buildx build -t $AWS_ECR_REPO_NAME-backend . # Specify the Docker context as '.'
         docker tag $AWS_ECR_REPO_NAME-backend $REPOSITORY_URI$AWS_ECR_REPO_NAME-backend:${{ github.run_number }}
         docker push $REPOSITORY_URI$AWS_ECR_REPO_NAME-backend:${{ github.run_number }}
 
