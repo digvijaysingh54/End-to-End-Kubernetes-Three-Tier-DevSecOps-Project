@@ -32,13 +32,13 @@ jobs:
     # Frontend Trivy File Scan
     - name: Trivy File Scan - Frontend
       run: |
-        cd frontend
+        cd Application-Code/frontend
         trivy fs . > trivy_frontend_scan.txt
 
     # Backend Trivy File Scan
     - name: Trivy File Scan - Backend
       run: |
-        cd backend
+        cd Application-Code/backend
         trivy fs . > trivy_backend_scan.txt
 
     # Docker Build & Push - Frontend
