@@ -12,7 +12,7 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_DEFAULT_REGION: 'us-east-1'
-      REPOSITORY_URI: ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_DEFAULT_REGION }}.amazonaws.com/
+      REPOSITORY_URI: ${{ secrets.ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/
 
     steps:
     - name: Checkout Code
