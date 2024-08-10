@@ -29,13 +29,13 @@ jobs:
       with:
         node-version: '14'
 
-    # Install Trivy
+    # Install Trivy using the official script
     - name: Install Trivy
       run: |
-        sudo apt-get update
+        sudo apt-get update -y
         sudo apt-get install wget -y
-        wget https://github.com/aquasecurity/trivy/releases/latest/download/trivy_0.44.0_Linux-64bit.deb
-        sudo dpkg -i trivy_0.44.0_Linux-64bit.deb
+        wget https://github.com/aquasecurity/trivy/releases/latest/download/trivy_0.45.0_Linux-64bit.deb
+        sudo dpkg -i trivy_0.45.0_Linux-64bit.deb
 
     # Frontend Trivy File Scan
     - name: Trivy File Scan - Frontend
