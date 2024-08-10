@@ -12,7 +12,9 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_DEFAULT_REGION: 'us-east-1'
-      REPOSITORY_URI: ${{ secrets.ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/
+      REPOSITORY_URI: ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ AWS_DEFAULT_REGION }}.amazonaws.com/
+      AWS_ECR_REPO_NAME_FRONTEND: 'frontend-repo' # Replace with your actual ECR repo name for frontend
+      AWS_ECR_REPO_NAME_BACKEND: 'backend-repo'   # Replace with your actual ECR repo name for backend
 
     steps:
     - name: Checkout Code
@@ -29,6 +31,7 @@ jobs:
       with:
         node-version: '14'
 
+    # Install Trivy using the official installation script
     - name: Install Trivy
       run: |
         sudo apt-get update -y
@@ -54,26 +57,22 @@ jobs:
     - name: Docker Image Build and Push - Frontend
       run: |
         cd Application-Code/frontend
-        docker buildx create --use # Ensure Buildx is enabled
-        docker buildx build -t $AWS_ECR_REPO_NAME/frontend . # Specify the Docker context as '.'
-        docker tag $AWS_ECR_REPO_NAME/frontend $REPOSITORY_URI$AWS_ECR_REPO_NAME/frontend:${{ github.run_number }}
-        docker push $REPOSITORY_URI$AWS_ECR_REPO_NAME/frontend:${{ github.run_number }}
+        docker buildx create --use
+        docker buildx build -t $REPOSITORY_URI$AWS_ECR_REPO_NAME_FRONTEND:${{ github.run_number }} --push .
 
     # Docker Build & Push - Backend
     - name: Docker Image Build and Push - Backend
       run: |
         cd Application-Code/backend
-        docker buildx create --use # Ensure Buildx is enabled
-        docker buildx build -t $AWS_ECR_REPO_NAME/backend . # Specify the Docker context as '.'
-        docker tag $AWS_ECR_REPO_NAME/backend $REPOSITORY_URI$AWS_ECR_REPO_NAME/backend:${{ github.run_number }}
-        docker push $REPOSITORY_URI$AWS_ECR_REPO_NAME/backend:${{ github.run_number }}
+        docker buildx create --use
+        docker buildx build -t $REPOSITORY_URI$AWS_ECR_REPO_NAME_BACKEND:${{ github.run_number }} --push .
 
     # Trivy Image Scan - Frontend
     - name: Trivy Image Scan - Frontend
       run: |
-        trivy image $REPOSITORY_URI$AWS_ECR_REPO_NAME/frontend:${{ github.run_number }} > trivy_frontend_image_scan.txt
+        trivy image $REPOSITORY_URI$AWS_ECR_REPO_NAME_FRONTEND:${{ github.run_number }} > trivy_frontend_image_scan.txt
 
     # Trivy Image Scan - Backend
     - name: Trivy Image Scan - Backend
       run: |
-        trivy image $REPOSITORY_URI$AWS_ECR_REPO_NAME/backend:${{ github.run_number }} > trivy_backend_image_scan.txt
+        trivy image $REPOSITORY_URI$AWS_ECR_REPO_NAME_BACKEND:${{ github.run_number }} > trivy_backend_image_scan.txt
