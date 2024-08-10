@@ -12,7 +12,7 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_DEFAULT_REGION: 'us-east-1'
-      REPOSITORY_URI: 767397805679.dkr.ecr.us-east-1.amazonaws.com/
+      REPOSITORY_URI: ${{ secrets.ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_DEFAULT_REGION }}.amazonaws.com/
 
     steps:
     - name: Checkout Code
@@ -28,6 +28,14 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '14'
+
+    # Install Trivy
+    - name: Install Trivy
+      run: |
+        sudo apt-get update
+        sudo apt-get install wget -y
+        wget https://github.com/aquasecurity/trivy/releases/latest/download/trivy_0.44.0_Linux-64bit.deb
+        sudo dpkg -i trivy_0.44.0_Linux-64bit.deb
 
     # Frontend Trivy File Scan
     - name: Trivy File Scan - Frontend
