@@ -91,10 +91,18 @@ jobs:
 
     # Trivy Image Scan - Frontend
     - name: Trivy Image Scan - Frontend
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: frontend-repo
+        IMAGE_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
       run: |
         trivy image $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG > trivy_frontend_image_scan.txt
 
     # Trivy Image Scan - Backend
     - name: Trivy Image Scan - Backend
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: backend-repo
+        IMAGE_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
       run: |
         trivy image $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG > trivy_backend_image_scan.txt
