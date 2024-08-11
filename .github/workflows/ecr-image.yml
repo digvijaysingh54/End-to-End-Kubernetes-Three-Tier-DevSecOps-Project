@@ -1,39 +1,38 @@
-name: Build and Push Docker Image to ECR
-
+---
+name: Build and Push Golang Image to AWS ECR
 on:
   push:
-    branches:
-      - master  # Change this to your default branch
-
+    branches: [ main ]
 jobs:
-  build:
+  build-and-push:
+    name: Build and Push to ECR
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
+    - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
-
-    - name: Login to AWS ECR
+    - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
 
-    - name: Build the Docker image
-      run: |
-        cd Application-Code/backend
-        docker build -t ${{ secrets.ECR_REPOSITORY }} .
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Tag the Docker image
+    - name: Automatic Tagging of Releases
+      id: increment-git-tag
       run: |
-        docker tag ${{ secrets.ECR_REPOSITORY }}:latest ${{ secrets.ECR_URI }}:latest
-   
+        bash ./build/git_update.sh -v major
 
-    - name: Push the Docker image to ECR
+    - name: Build, Tag, and Push the Image to Amazon ECR
+      id: build-image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: frontend
+        IMAGE_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
       run: |
-        set -e
-        docker push ${{ secrets.ECR_URI }}:latest
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
