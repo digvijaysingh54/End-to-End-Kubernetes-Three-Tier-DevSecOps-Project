@@ -45,9 +45,7 @@
 name: 'Terraform'
 
 on:
-  push:
-    branches: [ "master" ]
-  pull_request:
+  workflow_dispatch:  # Allows manual triggering of the workflow
 
 permissions:
   contents: read
