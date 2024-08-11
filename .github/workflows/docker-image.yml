@@ -21,7 +21,6 @@ jobs:
 
     - name: Build the Docker image
       run: |
-        cd Application-Code/frontend
         docker build -t ${{ secrets.ECR_REPOSITORY }} .
 
     - name: Tag the Docker image
