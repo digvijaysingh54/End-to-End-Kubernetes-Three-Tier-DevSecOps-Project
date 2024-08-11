@@ -92,9 +92,9 @@ jobs:
     # Trivy Image Scan - Frontend
     - name: Trivy Image Scan - Frontend
       run: |
-        trivy image $REPOSITORY_URI$AWS_ECR_REPO_NAME_FRONTEND:${{ github.run_number }} > trivy_frontend_image_scan.txt
+        trivy image $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG > trivy_frontend_image_scan.txt
 
     # Trivy Image Scan - Backend
     - name: Trivy Image Scan - Backend
       run: |
-        trivy image $REPOSITORY_URI$AWS_ECR_REPO_NAME_BACKEND:${{ github.run_number }} > trivy_backend_image_scan.txt
+        trivy image $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG > trivy_backend_image_scan.txt
