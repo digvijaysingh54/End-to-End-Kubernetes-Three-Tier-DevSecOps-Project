@@ -1,35 +1,27 @@
-name: CI Pipeline
+name: CI Pipeline for Frontend
 
 on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build-frontend:
     runs-on: ubuntu-latest
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_DEFAULT_REGION: 'us-east-1'
       REPOSITORY_URI: ${{ secrets.ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/
-      AWS_ECR_REPO_NAME_FRONTEND: 'frontend-repo' # Replace with your actual ECR repo name for frontend
-      AWS_ECR_REPO_NAME_BACKEND: 'backend-repo'   # Replace with your actual ECR repo name for backend
+      AWS_ECR_REPO_NAME_FRONTEND: 'frontend-repo'
 
     steps:
     - name: Checkout Code
       uses: actions/checkout@v2
-
-    - name: Set up JDK
-      uses: actions/setup-java@v3
-      with:
-        distribution: 'adopt'
-        java-version: '11'
 
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
         node-version: '14'
 
-    # Install Trivy using the official installation script
     - name: Install Trivy
       run: |
         sudo apt-get update -y
@@ -39,17 +31,11 @@ jobs:
         sudo apt-get update -y
         sudo apt-get install -y trivy
 
-    # Frontend Trivy File Scan
     - name: Trivy File Scan - Frontend
       run: |
         cd Application-Code/frontend
         trivy fs . > trivy_frontend_scan.txt
 
-    # Backend Trivy File Scan
-    - name: Trivy File Scan - Backend
-      run: |
-        cd Application-Code/backend
-        trivy fs . > trivy_backend_scan.txt
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -76,18 +62,7 @@ jobs:
         cd Application-Code/frontend
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-    - name: Build, Tag, and Push frontend Image to Amazon ECR
-      id: build-backend
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: backend-repo
-        IMAGE_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
-      run: |
-        cd Application-Code/backend
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG  
 
-    # Trivy Image Scan - Frontend
     - name: Trivy Image Scan - Frontend
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -95,12 +70,3 @@ jobs:
         IMAGE_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
       run: |
         trivy image $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG > trivy_frontend_image_scan.txt
-
-    # Trivy Image Scan - Backend
-    - name: Trivy Image Scan - Backend
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: backend-repo
-        IMAGE_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
-      run: |
-        trivy image $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG > trivy_backend_image_scan.txt
