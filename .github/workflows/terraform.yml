@@ -18,17 +18,29 @@ jobs:
           working-directory: ./path/to/your/terraform/config  # Change this to your path
 
       - name: Terraform Init
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.MY_CCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.MY_SECRET_ACCESS_KEY }}
         run: terraform init
         working-directory: ./terraform  # Change this to your path
 
       - name: Terraform Validate
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.MY_CCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.MY_SECRET_ACCESS_KEY }}
         run: terraform validate
         working-directory: ./terraform  # Change this to your path
 
       - name: Terraform Plan
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.MY_CCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.MY_SECRET_ACCESS_KEY }}
         run: terraform plan
         working-directory: ./terraform  # Change this to your path
 
       - name: Terraform Apply
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.MY_CCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.MY_SECRET_ACCESS_KEY }}
         run: terraform apply -auto-approve
         working-directory: ./terraform  # Change this to your path
