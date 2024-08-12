@@ -151,10 +151,10 @@ variable "sg_id_node" {
 }
 variable "aws_access_key_id" {
   type = string
-  default = "AKIA6GBMEVUALSUJ6XNM"
+  
 }
 
 variable "aws_secret_access_key" {
   type = string
-  default = "keAEbpjDJayrd0UVq2wyxo0KYkTGj7gHiYCaBRKW"
+  
 }
