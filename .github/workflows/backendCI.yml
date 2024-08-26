@@ -90,3 +90,15 @@ jobs:
         IMAGE_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
       run: |
         trivy image $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG > trivy_backend_image_scan.txt
+
+    - name: Set up Kubernetes context
+      uses: azure/k8s-set-context@v1
+      with:
+        kubeconfig: ${{ secrets.KUBE_CONFIG }}
+
+    - name: Deploy to Kubernetes
+      uses: azure/k8s-deploy@v1
+      with:
+        manifests: |
+          ./path/to/your/deployment.yaml
+          ./path/to/your/service.yaml
