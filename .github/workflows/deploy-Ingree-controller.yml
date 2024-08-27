@@ -1,0 +1,35 @@
+name: Deploy Ingress Controller
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Kubeconfig
+        uses: azure/setup-kubectl@v1
+        with:
+          version: 'latest'
+
+      - name: Configure Kubernetes credentials
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+        run: |
+          echo "${KUBE_CONFIG_DATA}" | base64 --decode > $HOME/.kube/config
+          chmod 600 $HOME/.kube/config
+
+      - name: Install Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: 'latest'
+
+      - name: Deploy Ingress Controller
+        run: |
+          helm repo add ingress-nginx https://charts.nginx.org
+          helm repo update
+          helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx --namespace kube-system --create-namespace
