@@ -1,0 +1,29 @@
+name: Backend CICD Pipeline
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest  # Use GitHub's hosted runners
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Kubernetes
+      uses: azure/setup-kubectl@v3
+      with:
+        version: 'latest'
+
+    - name: Deploy to Kubernetes
+      uses: azure/k8s-deploy@v1
+      with:
+        manifests: |
+          ./Kubernetes-Manifests-files/Backend/deployment.yaml
+          ./Kubernetes-Manifests-files/Backend/service.yaml
+        namespace: three-tier  # Specify your namespace, or remove if default
+        
+    - name: Check rollout status
+      run: |
+        kubectl rollout status deployment/api -n three-tier  # Check if the deployment was successful
