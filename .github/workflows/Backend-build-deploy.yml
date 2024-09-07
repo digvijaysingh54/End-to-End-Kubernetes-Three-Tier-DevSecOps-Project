@@ -100,5 +100,5 @@ jobs:
       uses: azure/k8s-deploy@v1
       with:
         manifests: |
-          ./path/to/your/deployment.yaml
-          ./path/to/your/service.yaml
+          ./Kubernetes-Manifests-files/Backend/deployment.yaml
+          ./Kubernetes-Manifests-files/Backend/service.yaml
