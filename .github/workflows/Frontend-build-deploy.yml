@@ -5,7 +5,7 @@ on:
 
 jobs:
   build-frontend:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -70,3 +70,15 @@ jobs:
     #     IMAGE_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
     #   run: |
     #     trivy image $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG > trivy_frontend_image_scan.txt
+
+    #- name: Set up Kubernetes context
+    # uses: azure/k8s-set-context@v1
+    #  with:
+    #    kubeconfig: ${{ secrets.KUBE_CONFIG }}
+
+    - name: Deploy to Kubernetes
+      uses: azure/k8s-deploy@v1
+      with:
+        manifests: |
+          ./Kubernetes-Manifests-files/Frontend/deployment.yaml
+          ./Kubernetes-Manifests-files/Frontend/service.yaml
