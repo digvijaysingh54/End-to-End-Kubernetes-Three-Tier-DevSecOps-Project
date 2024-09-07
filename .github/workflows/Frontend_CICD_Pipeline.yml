@@ -1,4 +1,4 @@
-name: Backend CICD Pipeline
+name: frontend CICD Pipeline
 
 on:
   workflow_dispatch:
@@ -20,8 +20,8 @@ jobs:
       uses: azure/k8s-deploy@v1
       with:
         manifests: |
-          ./Kubernetes-Manifests-files/Frontend/deployment.yaml
-          ./Kubernetes-Manifests-files/Frontend/service.yaml
+          ./Kubernetes-Manifests-file/Frontend/deployment.yaml
+          ./Kubernetes-Manifests-file/Frontend/service.yaml
         namespace: three-tier  # Specify your namespace, or remove if default
         
     - name: Check rollout status
