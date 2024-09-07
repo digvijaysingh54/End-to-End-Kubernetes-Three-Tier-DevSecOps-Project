@@ -20,8 +20,8 @@ jobs:
       uses: azure/k8s-deploy@v1
       with:
         manifests: |
-          ./Kubernetes-Manifests-files/Backend/deployment.yaml
-          ./Kubernetes-Manifests-files/Backend/service.yaml
+          ./Kubernetes-Manifests-file/Backend/deployment.yaml
+          ./Kubernetes-Manifests-file/Backend/service.yaml
         namespace: three-tier  # Specify your namespace, or remove if default
         
     - name: Check rollout status
