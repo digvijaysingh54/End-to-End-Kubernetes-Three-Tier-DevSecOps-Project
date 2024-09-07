@@ -1,0 +1,24 @@
+name: Kubernetes Deployment
+
+on:
+ workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Kubernetes
+      uses: azure/setup-kubectl@v3
+      with:
+        version: 'latest'
+
+    - name: Deploy all Kubernetes manifests
+      env:
+        KUBE_CONFIG: ${{ secrets.KUBE_CONFIG_DATA }}  # Your Kubernetes config stored as a GitHub secret
+      run: |
+        kubectl apply -f Kubernetes-Manifests-files/Database/  # Path to your Kubernetes YAML files directory
+        kubectl rollout status deployment/my-app  # Check the status of your deployment
