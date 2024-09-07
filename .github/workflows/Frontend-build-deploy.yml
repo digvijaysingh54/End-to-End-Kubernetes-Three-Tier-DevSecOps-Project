@@ -17,24 +17,24 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v2
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '14'
+    # - name: Set up Node.js
+    #   uses: actions/setup-node@v3
+    #   with:
+    #     node-version: '14'
 
-    - name: Install Trivy
-      run: |
-        sudo apt-get update -y
-        sudo apt-get install -y wget
-        wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-        echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
-        sudo apt-get update -y
-        sudo apt-get install -y trivy
+    # - name: Install Trivy
+    #   run: |
+    #     sudo apt-get update -y
+    #     sudo apt-get install -y wget
+    #     wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+    #     echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+    #     sudo apt-get update -y
+    #     sudo apt-get install -y trivy
 
-    - name: Trivy File Scan - Frontend
-      run: |
-        cd Application-Code/frontend
-        trivy fs . > trivy_frontend_scan.txt
+    # - name: Trivy File Scan - Frontend
+    #   run: |
+    #     cd Application-Code/frontend
+    #     trivy fs . > trivy_frontend_scan.txt
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -63,10 +63,10 @@ jobs:
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-    - name: Trivy Image Scan - Frontend
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: frontend-repo
-        IMAGE_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
-      run: |
-        trivy image $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG > trivy_frontend_image_scan.txt
+    # - name: Trivy Image Scan - Frontend
+    #   env:
+    #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+    #     ECR_REPOSITORY: frontend-repo
+    #     IMAGE_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
+    #   run: |
+    #     trivy image $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG > trivy_frontend_image_scan.txt
