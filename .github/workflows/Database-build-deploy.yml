@@ -20,5 +20,5 @@ jobs:
       #env:
       #  KUBE_CONFIG: ${{ secrets.KUBE_CONFIG_DATA }}  # Your Kubernetes config stored as a GitHub secret
       run: |
-        kubectl apply -f Kubernetes-Manifests-files/Database/  # Path to your Kubernetes YAML files directory
+        kubectl apply -f Kubernetes-Manifests-file/Database/  # Path to your Kubernetes YAML files directory
         kubectl rollout status deployment/mongodb  # Check the status of your deployment
